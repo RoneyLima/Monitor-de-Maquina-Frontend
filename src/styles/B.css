@@ -1,0 +1,10 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 01em 13rem;
+
+}
+
+.btn {
+    margin: 1rem;
+}
