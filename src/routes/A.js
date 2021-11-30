@@ -2,19 +2,20 @@ import { Button, Badge, Row, Col, Container } from "react-bootstrap";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ContextSocket } from "../context/context-sio";
 import '../styles/A.css';
-import '../data-mock.json'
+// import '../data-mock.json'
 
 export default function PageA(props) {
 
-    const socketio = useContext(ContextSocket);
+    const {socket, contagem, limite_padrao} = useContext(ContextSocket);
+
     const [maquina, setMaquina] = useState(false);
-    const [contagem, setContagem] = useState(0);
+    // const [contagem, setContagem] = useState(0);
     const [dados, setDados] = useState({
-        limite: '',
+        limite:limite_padrao,
+        eletrodo: 0,
         produto: '',
         lote: ''
     });
-
 
     let estado_maquina = maquina ? 'LIGADA' : 'DESLIGADA';
 
@@ -26,16 +27,17 @@ export default function PageA(props) {
 
     const mudaMaquina = () => {
         if (!maquina) {
-            socketio.emit("maquina_on", dados.limite);
+            socket.emit("maquina_on", dados);
         }
         else if (maquina) {
-            socketio.emit("maquina_off");
+            socket.emit("maquina_off");
         }
     };
 
     const handleSetLimite = useCallback((data) => {
         setDados({
             limite: data.limite,
+            eletrodo: data.eletrodo,
             produto: data.produto,
             lote: data.lote        
         })
@@ -53,24 +55,26 @@ export default function PageA(props) {
 
 
     useEffect(() => {
+        // handleSetLimite({limite: limite_padrao,eletrodo: 5})
+        // setDados({limite: limite_padrao, eletrodo: 5})
 
-        socketio.on('maquina_ligada', handleEstadoDaMaquina);
-        socketio.on('maquina_desligada', handleEstadoDaMaquina);
+        socket.on('maquina_ligada', handleEstadoDaMaquina);
+        socket.on('maquina_desligada', handleEstadoDaMaquina);
         
         // Define o limite da contagem
-        socketio.on('set_limite', data => handleSetLimite(data));
+        // socket.on('set_limite', data => handleSetLimite(data));
 
-        socketio.on('conta_golpes', (cont) => {
-            setContagem(cont)
-        });
+        // socket.on('conta_golpes', (cont) => {
+        //     setContagem(cont)
+        // });
         
-        socketio.on('limite_extendido', limext => limiteExtendido(limext));
+        // socket.on('limite_extendido', limext => limiteExtendido(limext));
 
 
         return () => {
 
         }
-    }, [socketio, handleEstadoDaMaquina, handleSetLimite, limiteExtendido])
+    }, [socket, handleEstadoDaMaquina, handleSetLimite, limiteExtendido])
 
 
     return (
@@ -98,7 +102,7 @@ export default function PageA(props) {
                             </h3>
                             <h3>
                                 Limite de golpes: <br />
-                                <Badge bg="secondary">{dados.limite}</Badge>
+                                <Badge bg="secondary">{limite_padrao}</Badge>
                             </h3>
                         </span>
                     </Col>

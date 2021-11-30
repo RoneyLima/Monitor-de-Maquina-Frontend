@@ -5,7 +5,8 @@ import '../styles/B.css'
 
 export default function PageB(props) {
     
-    const socketio = useContext(ContextSocket);
+    const {socket, contagem, limite_padrao} = useContext(ContextSocket);
+
     
 
     const [count01, setCount01] = useState(0);
@@ -49,6 +50,7 @@ export default function PageB(props) {
     // RECEBER CONTAGEM DE GOLPES
     const contagemInicialHandler = useCallback((dados) => {
         let data = JSON.parse(dados);
+        console.log(dados);
 
 
         setCount01(data[0]);
@@ -71,16 +73,17 @@ export default function PageB(props) {
 
 
 useEffect(() => {
-    socketio.emit('carregar_soldagens')
-    socketio.on('conta_golpes', (num) => HandleChange(num));
-    socketio.on('contagem_inicial', dados => contagemInicialHandler(dados));
+
+    socket.on('conta_golpes', (num) => HandleChange(num));
+
+    contagemInicialHandler(contagem);
 
     return () =>{
-    // socketio.off('conta_golpes', HandleChange);
+    // socket.off('conta_golpes', HandleChange);
     }
 
 
-    }, [socketio, HandleChange, contagemInicialHandler]);
+    }, [socket, HandleChange, contagemInicialHandler]);
     
     return (
         <div className="grid">

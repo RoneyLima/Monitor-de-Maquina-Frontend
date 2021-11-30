@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom'
 import { Route, Switch } from 'react-router-dom'
-import { socket, ContextSocket } from './context/context-sio';
+import { ContextSocket } from './context/context-sio';
+import {socket} from './context/socket_functions'
 import Index from './routes/index'
 import pageA from './routes/A'
 import pageB from './routes/B'
@@ -13,11 +14,10 @@ import './styles/App.css';
 function App() {
 
 
-  const [contagem, setContagem] = useState(0);
+  const [contagem, setContagem] = useState()
+  const limite_padrao = 25
 
   socket.emit('iniciando_front');
-  socket.on('client_connect', () => console.log('Front Conectado ao servidor'))
-
 
   useEffect(() => {
 
@@ -25,15 +25,19 @@ function App() {
       setContagem(cont)
     });
 
+    socket.on('contagem_inicial', (dados) => {
+      let data = JSON.parse(dados);
+      console.log(data)
+    });
 
     return () => {
 
     }
-  }, [contagem])
+  }, [])
 
   return (
 
-    <ContextSocket.Provider value={socket}>
+    <ContextSocket.Provider value={{socket, contagem, limite_padrao}}>
       <BrowserRouter>
         <header>
           <Header />
@@ -43,8 +47,8 @@ function App() {
           <div className='visual'>
           <Switch>
             <Route exact path="/" component={Index}/>
-            <Route exact path="/a" component={pageA} contagem={contagem} />
-            <Route exact path="/b" component={pageB} contagem={contagem} />
+            <Route exact path="/a" component={pageA} />
+            <Route exact path="/b" component={pageB} />
           </Switch>
           </div>
         </main>

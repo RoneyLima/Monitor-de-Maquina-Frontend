@@ -8,9 +8,9 @@ import { ContextSocket } from "../context/context-sio";
 
 export default function EletrodoLimiteModal() {
 
-    const socketio = useContext(ContextSocket);
+    const {socket} = useContext(ContextSocket);
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
     const [index, setIndex] = useState(0);
     const [elesubstituido, setElesubstituido] = useState(0);
 
@@ -33,19 +33,19 @@ export default function EletrodoLimiteModal() {
     const handleTroca = (e) => {
         setElesubstituido(e.target.id)
         handleSelect()
-        socketio.emit('eletrodo_substituido', e.target.id)
+        socket.emit('eletrodo_substituido', e.target.id)
         console.log('Substuido o eletrodo:', elesubstituido);
     }
 
 
     useEffect(() => {
 
-        socketio.on('limite_atingido', handleShow);
+        socket.on('limite_atingido', handleShow);
 
         return () => {
 
         }
-    }, [socketio])
+    }, [socket])
 
 
     return (
