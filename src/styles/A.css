@@ -1,0 +1,11 @@
+
+.info {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2rem 2rem ;
+}
+
+.item {
+    border: 0;
+    padding: 2rem;
+}
